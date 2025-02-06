@@ -278,9 +278,12 @@ class UnslothVisionDataCollator:
                 image = example["images"][0]
             else:
                 image, video = process_vision_info(messages)
-            texts .append(message)
-            images.append(image)
-        pass
+            texts.append(message)
+            if image is not None: # Only append valid images to avoid processor errors
+                images.append(image)
+
+        if len(images) == 0: # Set images to None if no images are found to avoid processor errors
+            images = None
 
         # Tokenize the texts and process the images
         batch = self.processor(
